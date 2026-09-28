@@ -57,7 +57,7 @@ function render(q=""){
 }
 search.addEventListener("input",e=>render(e.target.value));
 const categoryCards=document.querySelectorAll(".category[data-category]");
-categoryCards.forEach(card=>{card.querySelector(".cat-icon").innerHTML=categoryIcons[card.dataset.category]||"";card.addEventListener("click",()=>{activeCategory=card.dataset.category||"";search.value="";categoryCards.forEach(c=>c.classList.toggle("active",c===card));render();});});
+categoryCards.forEach(card=>{const icon=card.querySelector(".lane-icon");if(icon)icon.innerHTML=categoryIcons[card.dataset.category]||"";card.addEventListener("click",()=>{activeCategory=card.dataset.category||"";search.value="";categoryCards.forEach(c=>c.classList.toggle("active",c===card));render();});});
 document.getElementById("allTools").addEventListener("click",()=>{activeCategory="";search.value="";categoryCards.forEach(c=>c.classList.remove("active"));render();});
 render();
 const theme=document.getElementById("themeBtn");
