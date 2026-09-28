@@ -2,7 +2,7 @@
 const $=(s,r=document)=>r.querySelector(s), slug=document.body.dataset.tool||location.pathname.split('/').pop().replace('.html','');
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const words=s=>(s.match(/[A-Za-z][A-Za-z0-9+#.-]*/g)||[]);
-const uniq=a=>[...new Set(a.map(x=>x.toLowerCase()).filter(Boolean))];
+const stop=new Set('the and for with from that this your you are our their have has was were will can may into about through using use used a an to of in on at by or as is it be we i me my they he she his her its but not do does did than then also all any more most some such each'.split(' ')); const uniq=a=>[...new Set(a.map(x=>x.toLowerCase()).filter(x=>x&&!stop.has(x)))];
 const fmt=n=>Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:2}):'—';
 const money=n=>Number.isFinite(n)?'$'+n.toLocaleString(undefined,{maximumFractionDigits:2}):'—';
 const resultBox=$('#result'); function setResult(h){resultBox.innerHTML=h;resultBox.scrollIntoView({behavior:'smooth',block:'nearest'});}
@@ -42,8 +42,9 @@ const D={
 };
 const d=D[slug]||D['resume-score']; document.title=d[1]+' — Free Career Tool | Career Tools';
 const title=$('#toolTitle'),lead=$('#toolLead'),k=$('#toolKicker'),form=$('#toolForm'); if(title)title.textContent=d[1];if(lead)lead.textContent=d[2];if(k)k.textContent=d[0];if(form)form.innerHTML=d[3]+'<button id="run">'+d[4]+'</button>';
-const btn=$('#run'); if(!btn||!resultBox)return; const v=id=>{const e=$('#'+id);return e?e.value.trim():''}, n=id=>parseFloat(v(id))||0;
+const btn=$('#run'); if(!btn||!resultBox)return; const v=id=>{const e=$('#'+id);return e?e.value.trim():''}, n=id=>parseFloat(v(id))||0; function renderTracker(arr){const rows=arr.slice(0,10).map(x=>'<li><b>'+esc(x.company||'Company')+'</b> — '+esc(x.role||'Role')+' · '+esc(x.stage||'Applied')+(x.date?' · '+esc(x.date):'')+'</li>').join('');return setResult('<strong>'+arr.length+' saved application'+(arr.length===1?'':'s')+'</strong><ul>'+rows+'</ul><button class="secondary" id="clearTracker">Clear saved applications</button>')}
 const list=(t,x)=>'<strong>'+esc(t)+'</strong><ul>'+x.map(q=>'<li>'+q+'</li>').join('')+'</ul>';
+if(slug==='job-application-tracker'){const saved=JSON.parse(localStorage.getItem('career-applications')||'[]');if(saved.length)renderTracker(saved)}
 btn.addEventListener('click',()=>{
 try{
 if(slug==='salary-to-hourly-calculator'){const s=n('salary'),h=n('hours'),w=n('weeks');return setResult('<strong>'+money(s/(h*w))+'/hour</strong><p>'+money(s)+' annual salary using '+h+' hours/week and '+w+' weeks/year.</p>')}
@@ -73,7 +74,7 @@ if(slug==='professional-bio-generator'){return setResult('<strong>Short bio</str
 if(slug==='career-goal-planner'){return setResult('<strong>30 / 60 / 90 day plan</strong><ul><li><b>Days 1–30:</b> Define '+esc(v('goal'))+', audit skills and identify 3 priority gaps.</li><li><b>Days 31–60:</b> Build evidence through a project, course, portfolio item or targeted applications.</li><li><b>Days 61–90:</b> Measure progress and take the next concrete step toward '+esc(v('date')||'your target date')+'.</li></ul>')}
 if(slug==='skills-gap-checker'){const c=uniq(v('current').split(/[,\\n]/)),t=uniq(v('target').split(/[,\\n]/)),g=t.filter(x=>x&&!c.includes(x));return setResult('<strong>'+g.length+' target skills to review</strong><p>'+g.map(esc).join(' · ')+'</p>')}
 if(slug==='achievement-statement-generator'){const w=v('work'),r=v('resultText');return setResult(list('Achievement statements',['Improved '+esc(w)+(r?' by '+esc(r):' while improving execution'), 'Delivered '+esc(w)+(r?' resulting in '+esc(r):' with measurable improvement'), 'Streamlined '+esc(w)+(r?' to achieve '+esc(r):' and strengthened the process')]))}
-if(slug==='job-application-tracker'){let arr=JSON.parse(localStorage.getItem('career-applications')||'[]');arr.unshift({company:v('company'),role:v('role'),stage:v('stage'),date:v('date'),notes:v('notes')});arr=arr.slice(0,30);localStorage.setItem('career-applications',JSON.stringify(arr));return setResult('<strong>Saved locally</strong><p>'+arr.length+' application'+(arr.length===1?'':'s')+' stored on this device.</p><p>Latest: '+esc(arr[0].company)+' — '+esc(arr[0].role)+' ('+esc(arr[0].stage)+')</p><button class="secondary" id="clearTracker">Clear saved applications</button>')}
+if(slug==='job-application-tracker'){let arr=JSON.parse(localStorage.getItem('career-applications')||'[]');arr.unshift({company:v('company'),role:v('role'),stage:v('stage'),date:v('date'),notes:v('notes')});arr=arr.slice(0,30);localStorage.setItem('career-applications',JSON.stringify(arr));return renderTracker(arr)}
 }catch(e){setResult('<strong>Please check the fields.</strong><p>Enter valid information and try again.</p>')}
 });
 document.addEventListener('click',e=>{if(e.target.id==='clearTracker'){localStorage.removeItem('career-applications');setResult('<strong>Tracker cleared.</strong>') }});
