@@ -5,7 +5,7 @@ const words=s=>(s.match(/[A-Za-z][A-Za-z0-9+#.-]*/g)||[]);
 const stop=new Set('the and for with from that this your you are our their have has was were will can may into about through using use used a an to of in on at by or as is it be we i me my they he she his her its but not do does did than then also all any more most some such each'.split(' ')); const uniq=a=>[...new Set(a.map(x=>x.toLowerCase()).filter(x=>x&&!stop.has(x)))];
 const fmt=n=>Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:2}):'—';
 const money=n=>Number.isFinite(n)?'$'+n.toLocaleString(undefined,{maximumFractionDigits:2}):'—';
-const resultBox=$('#result'); function setResult(h){resultBox.innerHTML=h;resultBox.scrollIntoView({behavior:'smooth',block:'nearest'});}
+const resultBox=$('#result'); function setResult(h){resultBox.innerHTML=h;const out=resultBox.querySelector('.output');if(out&&!resultBox.querySelector('.copy-output')){const b=document.createElement('button');b.type='button';b.className='secondary copy-output';b.textContent='Copy result';b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(out.value);b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy result',1400)}catch(e){out.select();document.execCommand('copy');b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy result',1400)}});resultBox.appendChild(b)}resultBox.scrollIntoView({behavior:'smooth',block:'nearest'});}
 function f(label,id,ph,type='text',value=''){return '<label>'+esc(label)+'<input id="'+id+'" type="'+type+'" placeholder="'+esc(ph)+'" value="'+esc(value)+'"></label>'}
 function a(label,id,ph){return '<label>'+esc(label)+'<textarea id="'+id+'" rows="10" placeholder="'+esc(ph)+'"></textarea></label>'}
 const D={
