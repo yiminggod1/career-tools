@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yiminggod1.github.io/career-tools/sitemap.xml
