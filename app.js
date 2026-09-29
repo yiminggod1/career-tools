@@ -52,7 +52,7 @@ const grid=document.getElementById("toolGrid"),search=document.getElementById("s
 function render(q=""){
   const term=q.trim().toLowerCase();
   const filtered=tools.filter(t=>(!activeCategory||t[2]===activeCategory)&&t.join(" ").toLowerCase().includes(term));
-  grid.innerHTML=filtered.map((t,i)=>`<a class="tool" href="tools/${slug(t[0])}.html" style="--tool-accent:${catColors[t[2]]||"#6257e8"}"><span class="tool-icon">${renderIcon(t[3])}</span><span class="tool-index">${String(i+1).padStart(2,"0")}</span><b>${t[0]}</b><p>${t[1]}</p><span class="tool-footer"><span>${t[2]}</span><i>Open ↗</i></span></a>`).join("");
+  grid.innerHTML=filtered.map((t,i)=>{const style=["stamp","circle","plain","marker","ghost","badge"][i%6];return `<a class="tool tool-${style}" href="tools/${slug(t[0])}.html" style="--tool-accent:${catColors[t[2]]||"#6257e8"}"><span class="tool-icon">${renderIcon(t[3])}</span><span class="tool-index">${String(i+1).padStart(2,"0")}</span><b>${t[0]}</b><p>${t[1]}</p><span class="tool-footer"><span>${t[2]}</span><i>Open ↗</i></span></a>`;}).join("");
   empty.hidden=filtered.length>0;
 }
 search.addEventListener("input",e=>render(e.target.value));
